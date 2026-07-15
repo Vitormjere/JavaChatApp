@@ -1,0 +1,10 @@
+# Maven
+target/
+
+# IntelliJ
+.idea/
+*.iml
+
+# SQLite (não queremos versionar o banco de dados em si, só o código que o cria)
+*.db
+*.sqlite
