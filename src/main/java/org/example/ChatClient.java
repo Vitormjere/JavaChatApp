@@ -8,26 +8,37 @@ public class ChatClient {
     private static final String SERVER_ADDRESS = "localhost";
     private static final int SERVER_PORT = 12345;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         System.out.println("Conectando ao servidor...");
 
-        // Socket aqui já conecta direto, ao contrário do ServerSocket do servidor.
-        // "localhost" significa "essa mesma máquina" — útil pra testar tudo no seu PC.
-        try (Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT)) {
+        Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+        System.out.println("Conectado! Digite mensagens e aperte Enter (Ctrl+C para sair):");
 
-            System.out.println("Conectado ao servidor!");
+        PrintWriter writer = new PrintWriter(
+                new OutputStreamWriter(socket.getOutputStream()), true);
 
-            // TODO 1: crie um PrintWriter a partir de socket.getOutputStream()
-            PrintWriter writer = new PrintWriter(
-                    new OutputStreamWriter(socket.getOutputStream()),
-                    true
-            );
+        // Thread separada para escutar mensagens vindas do servidor,
+        // enquanto a thread principal cuida do teclado.
+        Thread listenerThread = new Thread(() -> {
+            try {
+                BufferedReader serverReader = new BufferedReader(
+                        new InputStreamReader(socket.getInputStream()));
+                String linhaRecebida;
+                while ((linhaRecebida = serverReader.readLine()) != null) {
+                    System.out.println(linhaRecebida);
+                }
+            } catch (IOException e) {
+                System.err.println("Conexão com o servidor encerrada.");
+            }
+        });
+        listenerThread.start();
 
-            // TODO 2: use o PrintWriter pra mandar uma linha de texto
-            writer.println("Olá, servidor! Esta é minha primeira mensagem.");
+        BufferedReader teclado = new BufferedReader(
+                new InputStreamReader(System.in));
 
-        } catch (IOException e) {
-            System.err.println("Erro no cliente: " + e.getMessage());
+        String linhaDigitada;
+        while ((linhaDigitada = teclado.readLine()) != null) {
+            writer.println(linhaDigitada);
         }
     }
 }
