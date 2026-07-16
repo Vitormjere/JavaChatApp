@@ -3,9 +3,14 @@ package org.example;
 import java.sql.*;
 
 public class Database {
-    private static final String URL = "jdbc:sqlite:chat_history.db";
+    private final String url;
 
     public Database() {
+        this("chat_history.db");
+    }
+
+    public Database(String fileName) {
+        this.url = "jdbc:sqlite:" + fileName;
         createTable();
     }
 
@@ -15,7 +20,7 @@ public class Database {
                 "nick TEXT NOT NULL," +
                 "content TEXT NOT NULL," +
                 "timestamp TEXT NOT NULL)";
-        try (Connection conn = DriverManager.getConnection(URL);
+        try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
         } catch (SQLException e) {
@@ -25,7 +30,7 @@ public class Database {
 
     public void saveMessage(String nick, String content, String timestamp) {
         String sql = "INSERT INTO messages (nick, content, timestamp) VALUES (?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(URL);
+        try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nick);
             pstmt.setString(2, content);
