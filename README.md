@@ -59,6 +59,11 @@ mvn test
 
 Covers message JSON serialization/deserialization and database persistence, using an isolated test database file.
 
+## Technical Documentation
+
+A complete technical write-up (architecture decisions, code walkthroughs, and real debugging challenges) is available here:
+[JavaChatApp_Documentacao.pdf](docs/JavaChatApp_Documentacao.pdf)
+
 ## Author
 
 Vitor Miranda Jeremias — [GitHub](https://github.com/Vitormjere)
