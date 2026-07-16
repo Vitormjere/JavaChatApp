@@ -1,7 +1,6 @@
 package org.example;
 
 import java.io.IOException;
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -14,10 +13,8 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Servidor iniciando na porta " + PORT + "...");
 
-        // A lista compartilhada de clientes conectados — criada UMA vez aqui,
-        // e a MESMA referência é passada pra todo ClientHandler que criarmos.
-        // CopyOnWriteArrayList já é thread-safe, lembra da explicação de antes.
         List<ClientHandler> clients = new CopyOnWriteArrayList<>();
+        Database database = new Database();
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
 
@@ -27,8 +24,7 @@ public class Main {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Cliente conectado! Endereço: " + clientSocket.getInetAddress());
 
-                // Agora passamos a lista compartilhada junto
-                ClientHandler handler = new ClientHandler(clientSocket, clients);
+                ClientHandler handler = new ClientHandler(clientSocket, clients, database);
                 Thread thread = new Thread(handler);
                 thread.start();
             }
